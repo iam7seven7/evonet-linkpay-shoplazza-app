@@ -1,0 +1,40 @@
+services:
+  db:
+    image: postgres:18.3
+    ports:
+      - "5432:5432"
+    env_file:
+      - ./db/.env
+    volumes:
+      - db_data:/var/lib/postgresql
+      - ./db/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d 
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    volumes:
+        - ./nginx/default.conf.template:/etc/nginx/templates/default.conf.template
+        - ./nginx/html:/var/www/html
+    ports:
+        - 8080:80
+    env_file:
+      - ./nginx/.env
+    depends_on:
+      - api
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    env_file:
+      - ./api/.env
+    volumes:
+      - ./api:/app
+      - /app/dist
+    depends_on:
+      - db
+    command: ["yarn", "run", "dev"]
+volumes:
+  db_data:
+    driver: local

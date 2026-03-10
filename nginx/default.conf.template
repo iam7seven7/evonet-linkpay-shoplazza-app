@@ -1,0 +1,13 @@
+server {
+  listen 80;
+  location = /ping {
+    return 200 'pong';
+  }
+  location /html/ {
+    alias /var/www/html/;
+    index index.html;
+  }
+  location / {
+    proxy_pass http://${APP_HOST}:${APP_PORT};
+  }
+}
