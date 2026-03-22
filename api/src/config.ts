@@ -8,6 +8,11 @@ interface Config {
     name: string;
     host: string;
   };
+  shoplazza: {
+    appId: string;
+    clientId: string;
+    clientSecret: string;
+  }
 }
 
 dotenv.config();
@@ -27,6 +32,11 @@ const config: Config = {
     name: getOsEnv('APP_NAME'),
     host: getOsEnv('APP_HOST'),
   },
+  shoplazza: {
+    appId: getOsEnv('SHOPLAZZA_APP_ID'),
+    clientId: getOsEnv('SHOPLAZZA_CLIENT_ID'),
+    clientSecret: getOsEnv('SHOPLAZZA_CLIENT_SECRET'),
+  }
 };
 
 export default config;

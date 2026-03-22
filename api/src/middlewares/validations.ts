@@ -1,17 +1,11 @@
-import { Request as _Request, Response, NextFunction } from 'express';
-import { ZodObject, ZodEffects, ZodError } from 'zod';
-import { ValidationError } from '@/utils/errors';
-
-type Request = _Request & {
-  validated?: {
-    body?: any;
-    query?: any;
-    params?: any;
-  };
-};
+import { Request } from '@/types';
+import { Response, NextFunction } from 'express';
+import createHttpError from 'http-errors';
+// import { z, z.ZodObject, z.ZodError } from 'zod';
+import * as z from 'zod';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const validateBody = <T extends ZodObject<any> | ZodEffects<any>>(schema: T) => {
+export const validateBody = <T extends z.ZodObject<any>>(schema: T) => {
   return (req: Request, _res: Response, next: NextFunction) => {
     if (!req.validated) {
       req.validated = {};
@@ -22,7 +16,7 @@ export const validateBody = <T extends ZodObject<any> | ZodEffects<any>>(schema:
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const validateQuery = <T extends ZodObject<any> | ZodEffects<any>>(schema: T) => {
+export const validateQuery = <T extends z.ZodObject<any>>(schema: T) => {
   return (req: Request, _res: Response, next: NextFunction) => {
     if (!req.validated) {
       req.validated = {};
@@ -33,7 +27,7 @@ export const validateQuery = <T extends ZodObject<any> | ZodEffects<any>>(schema
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const validateParams = <T extends ZodObject<any> | ZodEffects<any>>(schema: T) => {
+export const validateParams = <T extends z.ZodObject<any>>(schema: T) => {
   return (req: Request, _res: Response, next: NextFunction) => {
     if (!req.validated) {
       req.validated = {};
@@ -43,15 +37,14 @@ export const validateParams = <T extends ZodObject<any> | ZodEffects<any>>(schem
   };
 };
 
-const validate = <T extends ZodObject<any> | ZodEffects<any>>(data: any, schema: T) => {
+const validate = <T extends z.ZodObject<any>>(data: any, schema: T) => {
   try {
     return schema.parse(data) as z.infer<T>;
   } catch (e: unknown) {
-    if (e instanceof ZodError) {
-      const errorMessages = (e as ZodError).errors.map((error) => ({
-        [`${error.path.join('.')}`]: error.message,
-      }));
-      throw new ValidationError(errorMessages);
+    if (e instanceof z.ZodError) {
+      const httpError = createHttpError(422);
+      httpError.data = z.treeifyError(e as z.ZodError);
+      throw httpError;
     }
     throw e;
   }

@@ -5,7 +5,10 @@ import { isHttpError } from 'http-errors';
 const errorHandler = (e: Error, _req: Request, res: Response, next: NextFunction) => {
   if (isHttpError(e)) {
     if (e.expose) {
-      res.status(e.status).json({ message: e.message });
+      res.status(e.status).json({
+        message: e.message,
+        data: e.data,
+      });
     }
   } else {
     console.error(e);
