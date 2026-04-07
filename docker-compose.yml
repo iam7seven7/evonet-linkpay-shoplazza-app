@@ -1,8 +1,6 @@
 services:
   db:
     image: postgres:18.3
-    ports:
-      - "5432:5432"
     env_file:
       - ./db/.env
     volumes:
@@ -16,7 +14,7 @@ services:
         - ./nginx/default.conf.template:/etc/nginx/templates/default.conf.template
         - ./nginx/html:/var/www/html
     ports:
-        - 8080:80
+      - 8082:80
     env_file:
       - ./nginx/.env
     depends_on:
@@ -25,8 +23,6 @@ services:
     build:
       context: ./api
       dockerfile: Dockerfile
-    ports:
-      - 3000:3000
     env_file:
       - ./api/.env
     volumes:
