@@ -1,0 +1,14 @@
+services:
+  db:
+    ports:
+      - 5432:5432
+  redis:
+    ports:
+      - 6379:6379
+  api:
+    ports:
+      - 3000:3000
+    command: ["yarn", "run", "dev"]
+  nginx:
+    ports:
+      - 8080:80

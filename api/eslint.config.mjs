@@ -12,6 +12,7 @@ export default defineConfig([
     plugins: { js, ts },
     extends: ['js/recommended', 'ts/recommended'],
     rules: {
+      'no-console': 'warn',
       '@typescript-eslint/no-unused-vars': [
         'error',
         {

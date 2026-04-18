@@ -10,7 +10,7 @@ RUN yarn
 
 COPY . .
 
-#RUN yarn run prisma generate
+RUN yarn run prisma generate
 
 RUN yarn run build
 

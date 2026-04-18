@@ -1,0 +1,79 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "./generated"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Store {
+  id            String   @id @default(uuid())
+  storeId       String   @map("store_id")
+  storeName     String   @map("store_name")
+  accessToken   String   @map("access_token")
+  refreshToken  String   @map("refresh_token")
+  tokenExpireAt Int      @map("expires_at")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@unique([storeId])
+  @@map("stores")
+}
+
+model Account {
+  id         String   @id @default(uuid())
+  storeId    String?  @map("store_id")
+  merchantNo String   @map("merchant_no")
+  signKey    String   @map("sign_key")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@unique([merchantNo])
+  @@map("accounts")
+}
+
+model Payment {
+  id          String   @id @default(uuid())
+  shoplazzaId String   @map("shoplazza_id")
+  linkPayId   String?  @map("linkpay_id")
+  storeId     String?  @map("store_id")
+  merchantNo  String   @map("merchant_no")
+  cancelUrl   String?  @map("cancel_url")
+  returnUrl   String?  @map("return_url")
+  status      String   @map("status")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@unique([shoplazzaId])
+  @@unique([linkPayId])
+  @@index([storeId])
+  @@index([status])
+  @@index([createdAt])
+  @@index([updatedAt])
+  @@map("payments")
+}
+
+model Refund {
+  id          String   @id @default(uuid())
+  shoplazzaId String   @map("shoplazza_id")
+  linkPayId   String?  @map("linkpay_id")
+  storeId     String?  @map("store_id")
+  merchantNo  String   @map("merchant_no")
+  status      String   @map("status")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@unique([shoplazzaId])
+  @@unique([linkPayId])
+  @@index([storeId])
+  @@index([status])
+  @@index([createdAt])
+  @@index([updatedAt])
+  @@map("refund")
+}

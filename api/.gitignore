@@ -1,5 +1,6 @@
 dist/
 node_modules/
 src/prisma/client/
+src/prisma/generated/
 .env*
 !.env.example

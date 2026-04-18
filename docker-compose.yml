@@ -6,6 +6,11 @@ services:
     volumes:
       - db_data:/var/lib/postgresql
       - ./db/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d 
+  redis:
+    image: redis:8.6
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes --requirepass secret
   nginx:
     build:
       context: ./nginx
@@ -14,7 +19,7 @@ services:
         - ./nginx/default.conf.template:/etc/nginx/templates/default.conf.template
         - ./nginx/html:/var/www/html
     ports:
-      - 8082:80
+      - 8080:80
     env_file:
       - ./nginx/.env
     depends_on:
@@ -30,7 +35,9 @@ services:
       - /app/dist
     depends_on:
       - db
-    command: ["yarn", "run", "dev"]
+      - redis
 volumes:
   db_data:
+    driver: local
+  redis_data:
     driver: local
